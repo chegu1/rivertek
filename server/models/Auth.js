@@ -14,12 +14,21 @@ const userAuth = new mongoose.Schema({
         type: String,
         required: true
     },
+    isVerified: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     isAdmin: {
         type: Boolean,
         required: true,
         default: false
     }
 }, { timestamps: true })
+
+userAuth.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password)
+}
 
 userAuth.pre('save', async function (next) {
 

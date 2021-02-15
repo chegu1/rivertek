@@ -5,6 +5,9 @@ import "react-toastify/dist/ReactToastify.min.css";
 
 const UsersListTable = () => {
   const [userList, setUsersList] = useState([]);
+
+  // const { name, email, password, buttonText } = values;
+
   useEffect(() => {
     axios({
       method: "GET",
@@ -38,6 +41,19 @@ const UsersListTable = () => {
   };
 
   const acceptUser = (id) => {
+    axios({
+      method: "PUT",
+      url: `http://localhost:5000/api/${id}`,
+      data: {},
+    })
+      .then((res) => {
+        toast.success(res.data.message);
+      })
+      .catch((error) => {
+        // console.log(error.response.data, "signup");
+        // setValues({ ...values, buttonText: "Submit" });
+        // toast.error(error.response.data.error);
+      });
     console.log(id);
   };
   return (
@@ -57,7 +73,12 @@ const UsersListTable = () => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>
-                <button onClick={() => acceptUser(user._id)}>Accept</button>
+                <button
+                  disabled={user.isVerified}
+                  onClick={() => acceptUser(user._id)}
+                >
+                  Accept
+                </button>
                 <button onClick={() => removeUser(user._id)}>Reject</button>
               </td>
             </tr>
