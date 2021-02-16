@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import Layout from "../components/Layout";
 import "react-toastify/dist/ReactToastify.min.css";
 
 const UsersListTable = () => {
@@ -57,9 +58,12 @@ const UsersListTable = () => {
     console.log(id);
   };
   return (
-    <>
+    <Layout>
       <ToastContainer />
-      <table className="table table-dark table-hover">
+      <table
+        style={{ width: "60%", margin: "auto" }}
+        className="table table-dark table-hover mt-2  justify-content-md-center"
+      >
         <thead>
           <tr>
             <th>Name</th>
@@ -85,7 +89,7 @@ const UsersListTable = () => {
           ))}
         </tbody>
       </table>
-    </>
+    </Layout>
   );
 };
 

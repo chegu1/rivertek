@@ -42,7 +42,6 @@ exports.authUser = expressAsyncHandler(async (req, res) => {
     })
     if (user && user.isVerified && (await user.matchPassword(password))) {
         res.json({
-
             _id: user._id,
             name: user.name,
             email: user.email,
@@ -52,8 +51,8 @@ exports.authUser = expressAsyncHandler(async (req, res) => {
         })
 
     } else {
-        res.status(401)
-        throw new Error('Invalid Email or Password')
+        res.status(401).json({ message: 'Invalid Email or Password' })
+
     }
 })
 
@@ -70,6 +69,17 @@ exports.updateUser = expressAsyncHandler(async (req, res) => {
     const user = await User.findById(req.params.id);
     if (user) {
         user.isVerified = true;
+        const emailData = {
+            from: process.env.EMAIL_FROM,
+            to: user.email,
+            subject: `Adding User to List`,
+            html: `
+                <h3>Dear ${user.name} we are Added you to our application,you can directly loginto the app</h3>
+            `
+        }
+        console.log(emailData)
+        const sening = await sgMail.send(emailData)
+        console.log(sening)
         const updatedUser = await user.save()
         res.json({ updatedUser, message: 'user is verified and send  amail' })
     }
@@ -89,17 +99,7 @@ exports.deleteUser = expressAsyncHandler(async (req, res) => {
         console.log(emailData)
         const sening = await sgMail.send(emailData)
         console.log(sening)
-        // sgMail.send(emailData)
-        //     .then(sent => {
-        //         return res.json({
-        //             message: `Email has been sent to ${email}. Follow the instruction to activate your account`
-        //         })
-        //     })
-        //     .catch(err => {
-        //         // res.json({
-        //         //     message: err
-        //         // })
-        //     })
+
         await user.remove();
 
         res.json({ message: 'User is Removed and send a mail' })
